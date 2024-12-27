@@ -32,7 +32,7 @@ function PostForm() {
             throw new Error('You must provide an input')
         }
         setPreview(null)
-
+        // console.log(inputRef, 'line 35')
         try {
             await createPostAction(formDataCopy)
         } catch (error) {
@@ -70,7 +70,7 @@ function PostForm() {
                         onChange={handleImageChange}
                     />
 
-                    <button type="submit" hidden>Post</button>
+                    <button type="submit">Post</button>
                 </div>
 
                 {/* Preview when image selected */}

@@ -1,3 +1,20 @@
+# Linkedin Clone
+
+This project might just be a Clone, but my focus is to implement such systems.
+Let's breakdown the project.
+
+## Tech Stack
+
+**Client:** NextJS 14, Tailwind
+**Server:** Node, Express using NextJS API route
+
+
+## Frontend
+This is a single page application. It has 3 components
+- UserInformation - contains basic email, image and username of user with no. of posts and comments
+- 
+
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
