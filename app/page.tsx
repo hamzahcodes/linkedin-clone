@@ -1,7 +1,15 @@
 import UserInformation from "@/components/UserInformation";
 import PostForm from "@/components/PostForm";
+import { SignedIn } from "@clerk/nextjs";
+import { Post } from "@/mongodb/models/post";
+import connectToDB from "@/mongodb/db";
+import PostFeed from "@/components/PostFeed";
 
-export default function Home() {
+export default async function Home() {
+  await connectToDB()
+  const posts = await Post.getAllPosts()
+  console.log(posts)
+
   return (
     <div className="grid grid-cols-8 mt-5 sm:px-5">
       
@@ -12,7 +20,11 @@ export default function Home() {
 
       {/* Post Feed and Post Form */}
       <section className="col-span-full md:col-span-6 xl:col-span-4 xl:max-w-xl mx-auto w-full">
-        <PostForm />
+        <SignedIn>
+          <PostForm />
+        </SignedIn>
+
+        <PostFeed posts={posts} />
       </section>
 
       {/* Widgets */}
