@@ -18,14 +18,14 @@ function Post({ post }: { post: IPostDocument}) {
     const isAuthor = user?.id === post.user.userId
     return (
         // the whole post
-        <div className="bg-white rounded-md border">
+        <div className="bg-white rounded-xl border">
 
             {/* the header area containing avatar, name, username, time ago and delete icon */}
             <div className="p-4 flex space-x-2">
                 {/* User Avatar */}
                 <div>
                     <Avatar>
-                        <AvatarImage src={user?.imageUrl} />
+                        <AvatarImage src={post.user?.userImage} />
                         <AvatarFallback>CN</AvatarFallback>
                     </Avatar>
                 </div>
@@ -33,11 +33,11 @@ function Post({ post }: { post: IPostDocument}) {
                 {/* User name, username, timeago */}
                 <div className="flex justify-between flex-1">
                     <div>
-                        <p className="font-semibold">{user?.firstName} {user?.lastName} {" "} {isAuthor && (
+                        <p className="font-semibold">{post.user?.firstName} {post.user?.lastName} {" "} {isAuthor && (
                             <Badge className="ml-2 bg-gray-200 rounded-xl hover:bg-gray-200 cursor-pointer" variant="secondary">Author</Badge>
                         )}
                         </p>
-                        <p className="text-xs text-gray-400">@{post.user.firstName} {post.user?.lastName}-{user?.id?.slice(-4)}</p>
+                        <p className="text-xs text-gray-400">@{post.user.firstName} {post.user?.lastName}-{post.user?.userId.slice(-4)}</p>
                         <p className="text-xs text-gray-400">
                             <TimeAgo date={post.createdAt}/>
                         </p>
@@ -60,7 +60,7 @@ function Post({ post }: { post: IPostDocument}) {
 
                 {post.imageUrl && (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img className="w-full mx-auto" width={60} height={60} src={post.imageUrl} alt="Post image"/>
+                    <img className="w-full mx-auto h-80 object-cover" width={60} height={30} src={post.imageUrl} alt="Post image"/>
                 )}
             </div>
             

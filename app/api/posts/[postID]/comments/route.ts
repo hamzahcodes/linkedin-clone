@@ -13,7 +13,7 @@ export async function GET(request: Request, { params }: { params: { postID: stri
             return NextResponse.json({ message: 'Post not found' }, { status: 404 })
         }
 
-        const comments = post.getAllComments()
+        const comments = await post.getAllComments()
         return NextResponse.json(comments)
     } catch (error) {
         return NextResponse.json({ message: 'Error while fetching comments' }, { status: 500 })

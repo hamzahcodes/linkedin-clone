@@ -1,53 +1,43 @@
 # Linkedin Clone
 
-This project might just be a Clone, but my focus is to implement such systems.
+This project might just be a Clone, but my focus is to get implementation understanding of such systems.
 Let's breakdown the project.
 
 ## Tech Stack
 
-**Client:** NextJS 14, Tailwind
-**Server:** Node, Express using NextJS API route
+- **Client:** NextJS 14, ShadCN, TailwindCSS 
+- **Server:** Server Actions, Clerk for Auth, API routes
+- **Database:** MongoDB using Mongoose, AWS S3 to store images
 
 
 ## Frontend
-This is a single page application. It has 3 components
+
+This is a single page application. It has 3 components:
 - UserInformation - contains basic email, image and username of user with no. of posts and comments
-- 
+- Post
+    - This consists of Post Form and Post Feed
+- Widget - To know details of Followers and Following
 
 
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## Backend
 
-## Getting Started
+I divided the backend in 2 parts, Some parts I used server actions and for others I used API route:
+- Server actions - I used this whenever I created a post or comment. This helped directly track the inputs and create the same on server.
+- API route - For actions including liking post, getting comment counts, post counts, etc. This was much cleaner and logical.
 
-First, run the development server:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Cloud Storage
+- Mongo DB 
+    - 3 models created .i.e Post, Comment, Follower. You can check the details in models folder under mongodb directory.
+- AWS S3 to store the images on creation of post. Also deleted the image from S3 when post gets deleted.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## Contribute
+- You can fork / clone this repo and setup on your system. 
+- Steps
+    - Simply paste the the link found under Code button inside a new directory in your system. 
+    - ```MONGO_URI, AWS_REGION, AWS_BUCKET_NAME, AWS_ACCESS_KEY_ID, AWS_SECRET_KEY```
+    - Since, I have used Clerk for Authentication, it will automatically create 2 more env variables viz. ```NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY, CLERK_SECRET_KEY ```
+    - Run ```npm install``` or any other package manager tool to install all dependencies.
+    - Run the project ```npm run dev```.
+- You can create a pull request to my repository if you feel some features can be added or modified.

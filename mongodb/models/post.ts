@@ -39,9 +39,9 @@ const postSchema = new Schema<IPostDocument>({
         lastName: { type: String }
     },
     text: { type: String, required: true},
-    imageUrl: { type: String} ,
+    imageUrl: { type: String },
     comments: { type: [Schema.Types.ObjectId], ref: "Comment", default: []},
-    likes: { type: [String]}
+    likes: { type: [String] }
 }, { timestamps: true});
 
 postSchema.methods.likePost = async function(userId: string) {
@@ -68,9 +68,9 @@ postSchema.methods.removePost = async function() {
     }
 }
 
-postSchema.methods.commentOnPost = async function(comment: ICommentBase) {
+postSchema.methods.commentOnPost = async function(commentToAdd: ICommentBase) {
     try {
-        const newComment = Comment.create(comment)
+        const newComment = await Comment.create(commentToAdd)
         this.comments.push(newComment)
         await this.save()
     } catch (error) {
@@ -86,7 +86,7 @@ postSchema.methods.getAllComments = async function () {
         })
         return this.comments
     } catch (error) {
-        console.log("error when getting all posts", error)
+        console.log("error when getting all comments", error)
     }
 }
 
@@ -97,6 +97,7 @@ postSchema.statics.getAllPosts = async function() {
                             path:"comments",
                             options: { sort: { createdAt: -1 }}
                         })
+                        .populate("likes")
                         .lean()   // lean() to convert Mongoose objects to simple JS Objects
         
         return posts.map((post: IPostDocument) => ({

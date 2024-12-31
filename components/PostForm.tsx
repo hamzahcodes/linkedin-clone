@@ -7,12 +7,14 @@ import { Button } from "./ui/button";
 import { FileInput, ImageIcon, XIcon } from "lucide-react";
 import Image from "next/image";
 import createPostAction from "@/actions/createPostAction";
+import { toast } from "sonner";
 
 function PostForm() {
     const { user, isSignedIn } = useUser()
     const ref = useRef<HTMLFormElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
     const [ preview, setPreview ] = useState<string | null>(null);
+    const [ error, setError ] = useState(false);
 
 
     function handleImageChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -29,6 +31,7 @@ function PostForm() {
         const text = formDataCopy.get('postInput') as string;
 
         if(!text.trim()) {
+            setError(true)
             throw new Error('You must provide an input')
         }
         setPreview(null)
@@ -42,10 +45,15 @@ function PostForm() {
 
     return (
         <div className="mb-2">
-            <form ref={ref} className="p-2 bg-white rounded-lg border" action={formData => {
-                handlePostAction(formData)
+            <form ref={ref} className="p-2 bg-white rounded-xl border" action={formData => {
+                const promise = handlePostAction(formData)
+                toast.promise(promise, {
+                    loading: 'Creating post...',
+                    success: 'Post created',
+                    error: 'Failed to create post'
+                })
             }}>
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-2 ">
                     <Avatar>
                         <AvatarImage src={user?.imageUrl} />
                         <AvatarFallback>
@@ -58,9 +66,10 @@ function PostForm() {
                         type="text" 
                         name="postInput" 
                         placeholder="Start writing a post..."
-                        className="flex-1 outline-none rounded py-3 px-4 border"
+                        className="flex-1 outline-none rounded-xl py-2 px-4 border"
+                        onChange={() => setError(false)}
                     />
-
+                    
                     <input 
                         ref={inputRef} 
                         type="file" 
@@ -70,8 +79,11 @@ function PostForm() {
                         onChange={handleImageChange}
                     />
 
-                    <button type="submit">Post</button>
+                    <Button className="bg-gray-200 hover:bg-gray-300 h-[100%] border" type="submit" variant={'destructive'}>Post</Button>
                 </div>
+                {error && (
+                    <p className="text-red-500 font-semibold text-sm">Post should contain a text</p>
+                )}
 
                 {/* Preview when image selected */}
                 {preview && (

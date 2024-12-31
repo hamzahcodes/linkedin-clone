@@ -1,17 +1,29 @@
-import { currentUser } from "@clerk/nextjs/server"
+'use client'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs"
+import { SignedIn, SignedOut, SignInButton, useUser } from "@clerk/nextjs"
 import { Button } from "./ui/button"
+import { IPostDocument } from "@/mongodb/models/post"
+import { useEffect, useState } from "react"
 
-async function UserInformation() {
-    const user = await currentUser()
+function UserInformation({ posts }: { posts: IPostDocument[] }) {
+    const { user } = useUser()
 
+    const [ numberOfPosts, setNumberOfPosts ] = useState<number>(0);
+    const [ numberOfComments, setNumberOfComments ] = useState<number>(0);
     const firstName = user?.firstName
     const lastName = user?.lastName
     const imageUrl = user?.imageUrl
 
+    useEffect(() => {
+        setNumberOfPosts(posts.filter(post => post.user.userId === user?.id).length)
+        const userComments = posts.flatMap((post) =>
+            post?.comments?.filter((comment) => comment.user.userId === user?.id) || []
+        );
+        setNumberOfComments(userComments.length)
+    }, [posts, user?.id])
+
     return (
-        <div className="flex flex-col justify-center items-center bg-white mr-6 rounded-lg border py-4">
+        <div className="flex flex-col justify-center items-center bg-white mr-6 rounded-xl border py-4">
             <Avatar>
                 {user?.id ? (
                     <AvatarImage src={imageUrl} />
@@ -47,18 +59,21 @@ async function UserInformation() {
                 </div>  
             </SignedOut>
 
-            <hr className="w-full border-gray-200 my-5"/>
             
+            <SignedIn>
+                <hr className="w-full border-gray-200 my-5"/>
 
-            <div className="flex justify-between w-full px-4 text-sm">
-                <p className="font-semibold text-gray-400">Posts</p>
-                <p className="text-blue-400">0</p>
-            </div>
+                <div className="flex justify-between w-full px-4 text-sm">
+                    <p className="font-semibold text-gray-400">Posts</p>
+                    <p className="text-blue-400">{numberOfPosts}</p>
+                </div>
 
-            <div className="flex justify-between w-full px-4 text-sm">
-                <p className="font-semibold text-gray-400">Comments</p>
-                <p className="text-blue-400">0</p>
-            </div>
+                <div className="flex justify-between w-full px-4 text-sm">
+                    <p className="font-semibold text-gray-400">Comments</p>
+                    <p className="text-blue-400">{numberOfComments}</p>
+                </div>
+            </SignedIn>
+            
         </div>
     )
 }

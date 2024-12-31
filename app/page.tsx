@@ -4,18 +4,19 @@ import { SignedIn } from "@clerk/nextjs";
 import { Post } from "@/mongodb/models/post";
 import connectToDB from "@/mongodb/db";
 import PostFeed from "@/components/PostFeed";
+import FollowerWidget from "@/components/FollowerWidget";
 
 export default async function Home() {
   await connectToDB()
   const posts = await Post.getAllPosts()
-  console.log(posts)
+  // console.log(posts)
 
   return (
     <div className="grid grid-cols-8 mt-5 sm:px-5">
       
       {/* User Information */}
       <section className="hidden md:inline md:col-span-2">
-        <UserInformation />
+        <UserInformation posts={posts} />
       </section>
 
       {/* Post Feed and Post Form */}
@@ -29,7 +30,7 @@ export default async function Home() {
 
       {/* Widgets */}
       <section className="hidden xl:inline justify-center col-span-2">
-
+        <FollowerWidget />
       </section>
     </div>
   );

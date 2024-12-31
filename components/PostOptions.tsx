@@ -1,11 +1,15 @@
 'use client'
 
 import { IPostDocument } from "@/mongodb/models/post"
-import { useUser } from "@clerk/nextjs"
+import { SignedIn, useUser } from "@clerk/nextjs"
 import { useEffect, useState } from "react"
 import { Button } from "./ui/button"
 import { MessageCircle, Repeat2, Send, ThumbsUpIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
+import CommentForm from "./CommentForm"
+import CommentFeed from "./CommentFeed"
+import { IComment } from "@/mongodb/models/comment"
+import { toast } from "sonner"
 
 function PostOptions({ postId, post }: { postId: string, post: IPostDocument}) {
 
@@ -13,12 +17,22 @@ function PostOptions({ postId, post }: { postId: string, post: IPostDocument}) {
     const [ isCommentOpen, setIsCommentOpen ] = useState(false)
     const [ likes, setLikes ] = useState(post.likes)
     const [ liked, setLiked ] = useState(false)
+    const [ comments, setComments ] = useState<IComment[]>([])
 
     useEffect(() => {
         if(user?.id && post.likes?.includes(user?.id)) {
             setLiked(true)
         }
     }, [post, user])
+
+    useEffect(() => {
+        async function fetchComments(postId: string) {
+            const response = await fetch(`api/posts/${postId}/comments`)
+            const data = await response.json()
+            setComments(data)
+        }
+        fetchComments(postId)
+    }, [ isCommentOpen, postId ])
 
     async function likeOrUnlikePost() {
         if (!user?.id) {
@@ -69,11 +83,11 @@ function PostOptions({ postId, post }: { postId: string, post: IPostDocument}) {
                 </div>
 
                 <div>
-                    {post?.comments && post.comments.length > 0 && (
+                    {comments && comments.length > 0 && (
                         <p
                             onClick={() => setIsCommentOpen(!isCommentOpen)}
                             className="text-xs text-gray-600 cursor-pointer hover:underline"
-                        >{post.comments.length} comments</p>
+                        >{comments.length} comments</p>
                     )}
                 </div>
             </div>
@@ -86,7 +100,14 @@ function PostOptions({ postId, post }: { postId: string, post: IPostDocument}) {
                 <Button
                     variant="ghost"
                     className="postButton"
-                    onClick={likeOrUnlikePost}
+                    onClick={() => { 
+                        const promise = likeOrUnlikePost()
+                        toast.promise(promise, {
+                            loading: liked? 'Liking post...' : 'Unliking post',
+                            success: liked ? 'Liked post' : 'Unliked post',
+                            error: liked ? 'Failed to like post' : 'Failed to unlike post'
+                        })
+                    }}
                 >
                     <ThumbsUpIcon className={cn("mr-1", liked && "text-[#4881c2] fill-[#4881c2]")} />Like
                 </Button>
@@ -108,6 +129,16 @@ function PostOptions({ postId, post }: { postId: string, post: IPostDocument}) {
                     <Send className="mr-1" /> Send
                 </Button>
             </div>
+
+            {isCommentOpen && (
+                <div className="p-4">
+                    <SignedIn>
+                        <CommentForm postId={postId}/>
+                    </SignedIn>
+                    <CommentFeed comments={comments} postId={postId} />
+                </div>
+            )}
+                
         </div>
     )
 }
