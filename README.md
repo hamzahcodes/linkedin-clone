@@ -5,7 +5,7 @@ Let's breakdown the project.
 
 ## Tech Stack
 
-- **Client:** NextJS 14, ShadCN, TailwindCSS 
+- **Client:** NextJS 14, TypeScript, ShadCN, TailwindCSS 
 - **Server:** Server Actions, Clerk for Auth, API routes
 - **Database:** MongoDB using Mongoose, AWS S3 to store images
 
